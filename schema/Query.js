@@ -4,6 +4,7 @@ const {
   GraphQLString,
   GraphQLNonNull
 } = require('graphql')
+
 const Course = require('./Course')
 
 module.exports = new GraphQLObjectType({
