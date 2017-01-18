@@ -2,7 +2,7 @@ const {
   GraphQLObjectType,
   GraphQLList,
   GraphQLString,
-  GraphQLNonNull,
+  GraphQLNonNull
 } = require('graphql')
 const Course = require('./Course')
 
@@ -12,7 +12,7 @@ module.exports = new GraphQLObjectType({
     courses: {
       type: new GraphQLNonNull(new GraphQLList(Course)),
       description: 'Return a list of all the available courses',
-      resolve() {
+      resolve () {
         return [
           { _id: 'simple', name: 'Simple Course', position: 4 }
         ]
@@ -27,7 +27,7 @@ module.exports = new GraphQLObjectType({
       },
       type: Course,
       description: 'Return the course by the given id',
-      resolve() {
+      resolve () {
         return {
           _id: 'simple',
           name: 'Simple Course',

@@ -1,4 +1,3 @@
-const { graphql } = require('graphql')
 const schema = require('./schema')
 const express = require('express')
 const expressGraphql = require('express-graphql')
