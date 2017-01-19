@@ -8,7 +8,8 @@
     "lint": "standard",
     "test": "npm run lint",
     "dev": "sh scripts/devrun.sh",
-    "start": "node server.js"
+    "start": "node server.js",
+    "samples": "sh scripts/add-samples.sh"
   },
   "repository": {
     "type": "git",
@@ -32,6 +33,7 @@
     "express-session": "^1.14.2",
     "graphql": "^0.8.2",
     "mongodb": "^2.2.21",
+    "node-fetch": "^1.6.3",
     "passport": "^0.3.2",
     "passport-github2": "^0.1.10",
     "uuid": "^3.0.1"

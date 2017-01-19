@@ -1,5 +1,10 @@
 const fs = require('fs')
 const path = require('path')
+const fetch = require('node-fetch')
+
+sendQuery()
+
+// Core Functions
 
 function loadCourses () {
   const courses = getFsList(__dirname, { onlyDirs: true })
@@ -47,6 +52,24 @@ ${toArgs(l, 8)}
       ${all}
     }
   `
+}
+
+function sendQuery() {
+  const query = buildQuery()
+  const { ROOT_URL, ADMIN_TOKEN } = process.env
+  const url = `${ROOT_URL}/graphql?adminToken=${ADMIN_TOKEN}`
+  const options = {
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      query
+    })
+  }
+
+  fetch(url, options)
+    .then((res) => res.json())
+    .then((res) => console.log(JSON.stringify(res, null, 2)))
+    .catch((ex) => console.log(ex.stack))
 }
 
 // Utility functions
@@ -110,5 +133,3 @@ function getFsList (dir, options = {}) {
 
   return list
 }
-
-console.log(buildQuery())
