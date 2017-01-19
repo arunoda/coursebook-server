@@ -17,9 +17,15 @@ MongoClient.connect(mongoUrl)
     initMiddlewares(app, db)
     require('./login')(app, db)
 
-    app.use('/graphql', expressGraphql({
-      schema,
-      graphiql: true
+    app.use('/graphql', expressGraphql((req) => {
+      const { user, admin } = req
+      return {
+        schema,
+        graphiql: true,
+        context: {
+          user, admin, db
+        }
+      }
     }))
 
     app.listen(port, () => {
@@ -47,12 +53,4 @@ function initMiddlewares (app, db) {
     saveUninitialized: true,
     store: new MongoSessionStore({ db })
   }))
-
-  // GraphQL info middleware
-  // This allows to pass different stuff to the GraphQL context.
-  // (That's because, req object is the context inside GraphQL queries)
-  app.use(function (req, res, next) {
-    req.db = db
-    next()
-  })
 }
