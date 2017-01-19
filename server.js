@@ -3,7 +3,7 @@ const expressGraphql = require('express-graphql')
 const cors = require('cors')
 const { MongoClient } = require('mongodb')
 const expressSession = require('express-session')
-const MongoSessionStore = require('connect-mongo')(expressSession);
+const MongoSessionStore = require('connect-mongo')(expressSession)
 
 const schema = require('./schema')
 
@@ -14,7 +14,6 @@ const sessionSecret = process.env.SESSION_SECRET || 'secret'
 
 MongoClient.connect(mongoUrl)
   .then((db) => {
-
     initMiddlewares(app, db)
     require('./login')(app, db)
 
@@ -32,20 +31,20 @@ MongoClient.connect(mongoUrl)
     process.exit(1)
   })
 
-function initMiddlewares(app, db) {
+function initMiddlewares (app, db) {
   app.use(cors({
     credentials: true,
-    origin(origin, callback) {
+    origin (origin, callback) {
       callback(null, true)
     }
   }))
 
-  app.use(require('cookie-parser')());
+  app.use(require('cookie-parser')())
 
   app.use(expressSession({
     secret: sessionSecret,
     resave: true,
     saveUninitialized: true,
-    store: new MongoSessionStore({ db }),
-  }));
+    store: new MongoSessionStore({ db })
+  }))
 }

@@ -1,5 +1,5 @@
-const github = require('./github');
+const github = require('./github')
 
-module.exports = function(app, db, onLoginSuccess) {
-  github(app, db, onLoginSuccess);
-};
+module.exports = function (app, db, onLoginSuccess) {
+  github(app, db, onLoginSuccess)
+}
