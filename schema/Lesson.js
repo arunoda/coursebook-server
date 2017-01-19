@@ -13,8 +13,7 @@ module.exports = new GraphQLObjectType({
   fields: () => ({
     id: {
       type: new GraphQLNonNull(GraphQLString),
-      description: 'Id assigned to a lesson. It\' unique inside a course',
-      resolve: (c) => c.lessonId
+      description: 'Id assigned to a lesson. It\' unique inside a course'
     },
     name: {
       type: new GraphQLNonNull(GraphQLString),
@@ -43,10 +42,11 @@ module.exports = new GraphQLObjectType({
       type: new GraphQLList(Step),
       description: 'A list of steps in this lesson.',
       resolve (lesson, args, context) {
-        if (!context.user) {
-          throw new Error('Unauthorized Access: To view steps in a lesson')
+        if (context.admin || context.user) {
+          return lesson.steps
         }
-        return lesson.steps
+
+        throw new Error('Unauthorized Access: To view steps in a lesson')
       }
     }
   })

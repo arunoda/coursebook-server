@@ -13,10 +13,8 @@ module.exports = new GraphQLObjectType({
     courses: {
       type: new GraphQLNonNull(new GraphQLList(Course)),
       description: 'Return a list of all the available courses',
-      resolve () {
-        return [
-          { _id: 'simple', name: 'Simple Course', position: 4 }
-        ]
+      resolve (root, args, context) {
+        return context.db.collection('courses').find().toArray()
       }
     },
 
@@ -28,12 +26,8 @@ module.exports = new GraphQLObjectType({
       },
       type: Course,
       description: 'Return the course by the given id',
-      resolve () {
-        return {
-          _id: 'simple',
-          name: 'Simple Course',
-          position: 4
-        }
+      resolve (root, args, context) {
+        return context.db.collection('courses').findOne({ _id: args.id })
       }
     }
   })

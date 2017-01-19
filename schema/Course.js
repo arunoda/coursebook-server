@@ -27,28 +27,18 @@ module.exports = new GraphQLObjectType({
     lessons: {
       type: new GraphQLList(Lesson),
       description: 'A list of lessons in this course',
-      resolve () {
-        return [
-          {
-            lessonId: 'the-lesson',
-            name: 'The Lesson',
-            position: 1,
-            courseId: 'simple',
-            intro: 'The intro of this lesson',
-            steps: [
-              { id: 'the-id-of-a-text-step', type: 'text', text: 'This is the text' },
-              {
-                id: 'the-id-of-a-mcq-step',
-                type: 'mcq',
-                text: 'This is the question',
-                answers: [
-                  'One', 'Two', 'Three'
-                ],
-                correctAnswers: ['One', 'Three']
-              }
-            ]
-          }
-        ]
+      args: {
+        ids: {
+          type: new GraphQLList(GraphQLString),
+          description: 'A list of lession ids to filter'
+        }
+      },
+      resolve (course, args, context) {
+        const query = { courseId: course._id }
+        if (args.ids) {
+          query.id = { $in: args.ids }
+        }
+        return context.db.collection('lessons').find(query).toArray()
       }
     }
   })

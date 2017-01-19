@@ -3,16 +3,15 @@ const {
   GraphQLInt,
   GraphQLString,
   GraphQLNonNull,
-  GraphQLBoolean
+  GraphQLBoolean,
+  GraphQLList
 } = require('graphql')
-
-const Course = require('./Course')
 
 module.exports = new GraphQLObjectType({
   name: 'RootMutationQuery',
   fields: () => ({
     createCourse: {
-      type: Course,
+      type: require('./Course'),
       args: {
         id: { type: new GraphQLNonNull(GraphQLString) },
         name: { type: new GraphQLNonNull(GraphQLString) },
@@ -20,11 +19,11 @@ module.exports = new GraphQLObjectType({
       },
       resolve (root, { id, name, position }, context) {
         checkForAdmin(context)
-        const users = context.db.collection('courses')
+        const courses = context.db.collection('courses')
 
         const course = { _id: id, name, position }
-        return users.save(course)
-          .then(() => users.findOne({ _id: id }))
+        return courses.save(course)
+          .then(() => courses.findOne({ _id: id }))
       }
     },
 
@@ -35,9 +34,46 @@ module.exports = new GraphQLObjectType({
       },
       resolve (root, { id }, context) {
         checkForAdmin(context)
-        const users = context.db.collection('courses')
+        const courses = context.db.collection('courses')
 
-        return users.remove({ _id: id })
+        return courses.remove({ _id: id })
+          .then(() => true)
+      }
+    },
+
+    createLesson: {
+      type: require('./Lesson'),
+      args: {
+        courseId: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: new GraphQLNonNull(GraphQLString) },
+        name: { type: new GraphQLNonNull(GraphQLString) },
+        intro: { type: new GraphQLNonNull(GraphQLString) },
+        position: { type: new GraphQLNonNull(GraphQLInt) },
+        steps: { type: new GraphQLList(require('./Step').Input) }
+      },
+      resolve (root, args, context) {
+        checkForAdmin(context)
+        const lessons = context.db.collection('lessons')
+
+        const _id = `${args.courseId}--${args.id}`
+        const lesson = Object.assign({ _id }, args)
+        return lessons.save(lesson)
+          .then(() => lessons.findOne({ _id }))
+      }
+    },
+
+    removeLesson: {
+      type: GraphQLBoolean,
+      args: {
+        courseId: { type: new GraphQLNonNull(GraphQLString) },
+        id: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve (root, args, context) {
+        checkForAdmin(context)
+        const lessons = context.db.collection('lessons')
+
+        const query = { courseId: args.courseId, id: args.id }
+        return lessons.remove(query)
           .then(() => true)
       }
     }
