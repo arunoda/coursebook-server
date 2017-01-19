@@ -42,7 +42,12 @@ module.exports = new GraphQLObjectType({
     steps: {
       type: new GraphQLList(Step),
       description: 'A list of steps in this lesson.',
-      resolve: (l) => l.steps
+      resolve (lesson, args, context) {
+        if (!context.user) {
+          throw new Error('Unauthorized Access: To view steps in a lesson')
+        }
+        return lesson.steps
+      }
     }
   })
 })

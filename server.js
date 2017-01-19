@@ -47,4 +47,12 @@ function initMiddlewares (app, db) {
     saveUninitialized: true,
     store: new MongoSessionStore({ db })
   }))
+
+  // GraphQL info middleware
+  // This allows to pass different stuff to the GraphQL context.
+  // (That's because, req object is the context inside GraphQL queries)
+  app.use(function (req, res, next) {
+    req.db = db
+    next()
+  })
 }

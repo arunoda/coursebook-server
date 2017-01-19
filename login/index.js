@@ -36,6 +36,7 @@ module.exports = function (app, db) {
   initLoginStrategies(app, db, (req, res) => {
     const userId = req.user._id
     if (req.session.needToken) {
+      req.logout('/')
       const token = uuid.v4()
       const query = { _id: userId }
       const modifiers = { $push: { 'loginTokens': token } }
