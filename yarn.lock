@@ -963,6 +963,10 @@ graphql:
   dependencies:
     iterall "1.0.2"
 
+graphqlify:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/graphqlify/-/graphqlify-1.1.0.tgz#1d1d81e37b209fc09742fe48da3ac4763e20ddc7"
+
 har-validator@~2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/har-validator/-/har-validator-2.0.6.tgz#cdcbc08188265ad119b6a5a7c8ab70eecfb5d27d"
