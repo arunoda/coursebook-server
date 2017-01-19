@@ -2,10 +2,23 @@ const fs = require('fs')
 const path = require('path')
 
 function loadCourses() {
-  const courses = fs.readdirSync(__dirname)
+  const courses = getFsList({ onlyDirs: true })
+  return courses
+}
+
+function getFsList(options = {}) {
+  const list = fs.readdirSync(__dirname)
     .filter((fileName) => {
       const fullFileName = path.join(__dirname, fileName)
-      return fs.statSync(fullFileName).isDirectory()
+      const stat = fs.statSync(fullFileName)
+
+      if (options.onlyDirs) {
+        return stat.isDirectory()
+      } else if (options.onlyFiles) {
+        return stat.isFile()
+      }
+
+      return true
     })
     .map((dirName) => {
       const parts = dirName.split('-')
@@ -16,7 +29,7 @@ function loadCourses() {
       return { id, name, position }
     })
 
-  return courses
+  return list
 }
 
-console.log(loadCourses())
+console.log('XXX', loadCourses())
