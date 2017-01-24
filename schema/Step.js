@@ -2,6 +2,7 @@ const {
   GraphQLObjectType,
   GraphQLString,
   GraphQLInt,
+  GraphQLBoolean,
   GraphQLList,
   GraphQLNonNull,
   GraphQLInputObjectType
@@ -30,7 +31,14 @@ const commonFields = {
   },
   correctAnswers: {
     type: new GraphQLList(GraphQLString),
-    description: 'A list of correct answers'
+    description: 'A list of correct answers.'
+  },
+  visited: {
+    type: new GraphQLNonNull(GraphQLBoolean),
+    description: 'Indicate whether user visited this step or not.',
+    resolve(step) {
+      return step.visited || false
+    }
   }
 }
 

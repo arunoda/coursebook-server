@@ -38,7 +38,10 @@ module.exports = new GraphQLObjectType({
         if (args.ids) {
           query.id = { $in: args.ids }
         }
-        return context.db.collection('lessons').find(query).toArray()
+        const options = {
+          sort: { position: 1 }
+        }
+        return context.db.collection('lessons').find(query, options).toArray()
       }
     }
   })

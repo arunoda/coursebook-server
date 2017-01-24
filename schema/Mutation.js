@@ -76,12 +76,39 @@ module.exports = new GraphQLObjectType({
         return lessons.remove(query)
           .then(() => true)
       }
+    },
+
+    markVisited: {
+      type: GraphQLBoolean,
+      description: 'Mark a given step in a lesson as visited',
+      args: {
+        courseId: { type: new GraphQLNonNull(GraphQLString) },
+        lessonId: { type: new GraphQLNonNull(GraphQLString) },
+        stepId: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve (root, { courseId, lessonId, stepId }, context) {
+        if (!context.user) {
+          throw new Error('Unauthorized Access! - Only for loggedIn users')
+        }
+
+        const progressColl = context.db.collection('progress')
+        const query = {
+          _id: context.user._id
+        }
+        const modifier = {
+          $set: {}
+        }
+        modifier['$set'][`${courseId}.${lessonId}.${stepId}.visited`] = true
+
+        return progressColl.update(query, modifier, { upsert: true })
+          .then(() => true)
+      }
     }
   })
 })
 
 function checkForAdmin (context) {
   if (!context.admin) {
-    throw new Error('Unauthorized Access')
+    throw new Error('Unauthorized Access! - Only for admins')
   }
 }

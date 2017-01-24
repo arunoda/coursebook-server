@@ -14,7 +14,11 @@ module.exports = new GraphQLObjectType({
       type: new GraphQLNonNull(new GraphQLList(Course)),
       description: 'Return a list of all the available courses',
       resolve (root, args, context) {
-        return context.db.collection('courses').find().toArray()
+        const query = {}
+        const options = {
+          sort: { position: 1 }
+        }
+        return context.db.collection('courses').find(query, options).toArray()
       }
     },
 

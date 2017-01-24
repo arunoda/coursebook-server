@@ -42,11 +42,27 @@ module.exports = new GraphQLObjectType({
       type: new GraphQLList(Step),
       description: 'A list of steps in this lesson.',
       resolve (lesson, args, context) {
-        if (context.admin || context.user) {
-          return lesson.steps
+        if (!context.admin && !context.user) {
+          throw new Error('Unauthorized Access: To view steps in a lesson')
         }
 
-        throw new Error('Unauthorized Access: To view steps in a lesson')
+        const progressColl = context.db.collection('progress')
+
+        const query = { _id: context.user._id }
+        const options = { fields: {} }
+        options.fields[`${lesson.courseId}.${lesson.id}`] = 1
+
+        return progressColl.findOne(query, options)
+          .then((p = {}) => {
+            const courseProgress = p[lesson.courseId] || {}
+            const lessonProgress =courseProgress[lesson.id] || {}
+            // Merge progress object for the step into the actual step.
+            const steps = lesson.steps.map(step => {
+              return Object.assign(lessonProgress[step.id] || {}, step)
+            })
+
+            return steps
+          })
       }
     }
   })
