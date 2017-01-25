@@ -7,6 +7,8 @@ const {
   GraphQLList
 } = require('graphql')
 
+const Step = require('./Step')
+
 module.exports = new GraphQLObjectType({
   name: 'RootMutationQuery',
   fields: () => ({
@@ -105,8 +107,8 @@ module.exports = new GraphQLObjectType({
       }
     },
 
-    checkAnswer: {
-      type: GraphQLBoolean,
+    submitAnswer: {
+      type: Step,
       description: 'Mark a given step in a lesson as visited',
       args: {
         courseId: { type: new GraphQLNonNull(GraphQLString) },
@@ -122,24 +124,24 @@ module.exports = new GraphQLObjectType({
         const progressColl = context.db.collection('progress')
         const lessonColl = context.db.collection('lessons')
 
-        let isCorrect = false
+        let step
 
         // TODO: Prevent checking answer more than once.
         return lessonColl.findOne({ courseId, id: lessonId })
           .then((lesson) => {
-            const step = lesson.steps.find((s) => s.id === stepId)
+            step = lesson.steps.find((s) => s.id === stepId)
             if (step.type !== 'mcq') {
               throw new Error(`Step type is not MCQ but ${step.type}`)
             }
 
-            isCorrect = step.correctAnswer === answer
+            step.givenAnswer = answer
 
             // Set the correct answer
             const modifier = { $set: {} }
             modifier['$set'][`${courseId}.${lessonId}.${stepId}.givenAnswer`] = answer
             return progressColl.update({ _id: context.user._id }, modifier, { upsert: true })
           })
-          .then(() => isCorrect)
+          .then(() => step)
       }
     }
   })
