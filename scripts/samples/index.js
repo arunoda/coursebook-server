@@ -54,7 +54,7 @@ ${toArgs(l, 8)}
   `
 }
 
-function sendQuery() {
+function sendQuery () {
   const query = buildQuery()
   const { ROOT_URL, ADMIN_TOKEN } = process.env
   const url = `${ROOT_URL}/graphql?adminToken=${ADMIN_TOKEN}`

@@ -19,9 +19,7 @@ module.exports = {
       answers: [
         'One', 'Two', 'Three', 'Four'
       ],
-      correctAnswers: [
-        'One', 'Four'
-      ]
+      correctAnswer: 'Four'
     }
   ]
 }

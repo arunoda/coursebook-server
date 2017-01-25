@@ -28,17 +28,6 @@ const commonFields = {
   answers: {
     type: new GraphQLList(GraphQLString),
     description: 'A list of answers. This is available only if the type = mcq'
-  },
-  correctAnswers: {
-    type: new GraphQLList(GraphQLString),
-    description: 'A list of correct answers.'
-  },
-  visited: {
-    type: new GraphQLNonNull(GraphQLBoolean),
-    description: 'Indicate whether user visited this step or not.',
-    resolve(step) {
-      return step.visited || false
-    }
   }
 }
 
@@ -46,12 +35,37 @@ module.exports = new GraphQLObjectType({
   name: 'Step',
   description: 'A single step in the lesson. Usually this is sub-section of a lesson. There is a task assigned it',
   fields: () => (Object.assign({
+    visited: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'Indicate whether user visited this step or not.',
+      resolve (step) {
+        return step.visited || false
+      }
+    },
 
+    givenAnswer: {
+      type: GraphQLString,
+      description: 'The answer given by the user'
+    },
+
+    correctAnswer: {
+      type: GraphQLString,
+      description: 'The correct answer.',
+      resolve (step) {
+        if (!step.givenAnswer) return null
+        return step.correctAnswer
+      }
+    }
   }, commonFields))
 })
 
 module.exports.Input = new GraphQLInputObjectType({
   name: 'StepInput',
   description: 'A single step in the lesson. Usually this is sub-section of a lesson. There is a task assigned it',
-  fields: () => (commonFields)
+  fields: () => (Object.assign({
+    correctAnswer: {
+      type: GraphQLString,
+      description: 'The correct answer.'
+    }
+  }, commonFields))
 })

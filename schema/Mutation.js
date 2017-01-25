@@ -103,6 +103,44 @@ module.exports = new GraphQLObjectType({
         return progressColl.update(query, modifier, { upsert: true })
           .then(() => true)
       }
+    },
+
+    checkAnswer: {
+      type: GraphQLBoolean,
+      description: 'Mark a given step in a lesson as visited',
+      args: {
+        courseId: { type: new GraphQLNonNull(GraphQLString) },
+        lessonId: { type: new GraphQLNonNull(GraphQLString) },
+        stepId: { type: new GraphQLNonNull(GraphQLString) },
+        answer: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve (root, { courseId, lessonId, stepId, answer }, context) {
+        if (!context.user) {
+          throw new Error('Unauthorized Access! - Only for loggedIn users')
+        }
+
+        const progressColl = context.db.collection('progress')
+        const lessonColl = context.db.collection('lessons')
+
+        let isCorrect = false
+
+        // TODO: Prevent checking answer more than once.
+        return lessonColl.findOne({ courseId, id: lessonId })
+          .then((lesson) => {
+            const step = lesson.steps.find((s) => s.id === stepId)
+            if (step.type !== 'mcq') {
+              throw new Error(`Step type is not MCQ but ${step.type}`)
+            }
+
+            isCorrect = step.correctAnswer === answer
+
+            // Set the correct answer
+            const modifier = { $set: {} }
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.givenAnswer`] = answer
+            return progressColl.update({ _id: context.user._id }, modifier, { upsert: true })
+          })
+          .then(() => isCorrect)
+      }
     }
   })
 })

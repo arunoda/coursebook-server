@@ -53,9 +53,10 @@ module.exports = new GraphQLObjectType({
         options.fields[`${lesson.courseId}.${lesson.id}`] = 1
 
         return progressColl.findOne(query, options)
-          .then((p = {}) => {
+          .then((p) => {
+            p = p || {}
             const courseProgress = p[lesson.courseId] || {}
-            const lessonProgress =courseProgress[lesson.id] || {}
+            const lessonProgress = courseProgress[lesson.id] || {}
             // Merge progress object for the step into the actual step.
             const steps = lesson.steps.map(step => {
               return Object.assign(lessonProgress[step.id] || {}, step)
