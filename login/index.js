@@ -47,9 +47,6 @@ module.exports = function (app, db) {
           res.status(500).send('Internal Error')
         })
     } else {
-      res.cookie('userId', userId, {
-        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365) // expires in a year
-      })
       redirect()
     }
 
@@ -73,11 +70,8 @@ module.exports = function (app, db) {
 
     const userId = req.user._id
     req.logout('/')
-    res.cookie('userId', null, {
-      expires: new Date(Date.now() - 1000)
-    })
 
-    db.collection('users').update({ _id: userId }, { $set: { 'loginTokens': [] } })
+    db.collection('users').update({ _id: userId }, { $unset: { 'loginTokens': true } })
       .then(redirect)
       .catch((ex) => {
         console.error(ex.stack)
