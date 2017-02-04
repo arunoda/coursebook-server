@@ -1,15 +1,14 @@
 const passport = require('passport')
 const GitHubStrategy = require('passport-github2')
-const fetch = require('node-fetch')
 const GitHubAPI = require('github')
 
 const githubOptions = {
-  protocol: "https",
+  protocol: 'https',
   headers: {
     'user-agent': 'Node.js'
   },
   Promise
-};
+}
 
 module.exports = function (app, db, onLoginSuccess) {
   passport.use(new GitHubStrategy({
@@ -32,17 +31,17 @@ module.exports = function (app, db, onLoginSuccess) {
 
       // We need to get the email from GitHub manually.
       // It's not come with the profile always.
-      const github = new GitHubAPI(githubOptions);
+      const github = new GitHubAPI(githubOptions)
       github.authenticate({ type: 'oauth', token: accessToken })
 
       github.users
         // create the user on the DB with the email.
         .getEmails({
-          user: profile.username,
+          user: profile.username
         })
         .then((emails) => {
           if (emails[0]) {
-            user.email = emails[0].email;
+            user.email = emails[0].email
           }
 
           return db.collection('users').update({ _id: id }, { $set: user }, { upsert: true })

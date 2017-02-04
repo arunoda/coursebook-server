@@ -94,15 +94,24 @@ module.exports = new GraphQLObjectType({
         }
 
         const progressColl = context.db.collection('progress')
-        const query = {
-          _id: context.user._id
-        }
-        const modifier = {
-          $set: {}
-        }
-        modifier['$set'][`${courseId}.${lessonId}.${stepId}.visited`] = true
+        const lessonsColl = context.db.collection('lessons')
 
-        return progressColl.update(query, modifier, { upsert: true })
+        return lessonsColl.findOne({ courseId, id: lessonId })
+          .then((lesson) => {
+            const step = lesson.steps.find((s) => s.id === stepId)
+            const query = {
+              _id: context.user._id
+            }
+            const modifier = {
+              $set: {}
+            }
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.visited`] = true
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.visitedAt`] = new Date()
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.type`] = step.type
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.points`] = step.points
+
+            return progressColl.update(query, modifier, { upsert: true })
+          })
           .then(() => true)
       }
     },
@@ -134,11 +143,17 @@ module.exports = new GraphQLObjectType({
               throw new Error(`Step type is not MCQ but ${step.type}`)
             }
 
+            const isCorrectAnswer = answer === step.correctAnswer
             step.givenAnswer = answer
 
             // Set the correct answer
             const modifier = { $set: {} }
             modifier['$set'][`${courseId}.${lessonId}.${stepId}.givenAnswer`] = answer
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.isCorrectAnswer`] = isCorrectAnswer
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.answeredAt`] = new Date()
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.type`] = step.type
+            modifier['$set'][`${courseId}.${lessonId}.${stepId}.points`] = step.points
+
             return progressColl.update({ _id: context.user._id }, modifier, { upsert: true })
           })
           .then(() => step)

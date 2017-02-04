@@ -6,6 +6,7 @@ const {
 } = require('graphql')
 
 const Course = require('./Course')
+const User = require('./User')
 
 module.exports = new GraphQLObjectType({
   name: 'RootQuery',
@@ -32,6 +33,14 @@ module.exports = new GraphQLObjectType({
       description: 'Return the course by the given id',
       resolve (root, args, context) {
         return context.db.collection('courses').findOne({ _id: args.id })
+      }
+    },
+
+    user: {
+      type: User,
+      description: 'Information about the current user',
+      resolve (root, args, context) {
+        return context.user
       }
     }
   })

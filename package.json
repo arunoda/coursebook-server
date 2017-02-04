@@ -34,7 +34,6 @@
     "github": "^8.1.1",
     "graphql": "^0.8.2",
     "mongodb": "^2.2.21",
-    "node-fetch": "^1.6.3",
     "passport": "^0.3.2",
     "passport-github2": "^0.1.10",
     "uuid": "^3.0.1"
