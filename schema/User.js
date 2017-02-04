@@ -1,12 +1,20 @@
 const {
   GraphQLObjectType,
   GraphQLInt,
+  GraphQLString,
   GraphQLNonNull
 } = require('graphql')
 
 module.exports = new GraphQLObjectType({
   name: 'User',
   fields: () => ({
+    name: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'Name of the user',
+      resolve (user) {
+        return user.strategies.github.profile.displayName
+      }
+    },
     points: {
       type: new GraphQLNonNull(GraphQLInt),
       description: 'Total points for this user',
@@ -15,6 +23,8 @@ module.exports = new GraphQLObjectType({
         return progressColl
           .findOne({ _id: user._id })
           .then((item) => {
+            if (!item) return 0
+
             let totalPoints = 0
             delete item._id
 
