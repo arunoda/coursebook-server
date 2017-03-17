@@ -3,7 +3,7 @@ const expressGraphql = require('express-graphql')
 const cors = require('cors')
 const { MongoClient } = require('mongodb')
 const expressSession = require('express-session')
-const MongoSessionStore = require('connect-mongo')(expressSession)
+const MongoDBSessionStore = require('connect-mongodb-session')(expressSession);
 
 const schema = require('./schema')
 
@@ -51,6 +51,6 @@ function initMiddlewares (app, db) {
     secret: sessionSecret,
     resave: true,
     saveUninitialized: true,
-    store: new MongoSessionStore({ db })
+    store: new MongoDBSessionStore({ uri: mongoUrl, collection: 'sessions' })
   }))
 }
