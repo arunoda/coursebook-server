@@ -34,14 +34,23 @@ module.exports = new GraphQLObjectType({
         }
       },
       resolve (course, args, context) {
+        const coll = context.db.collection('lessons')
         const query = { courseId: course._id }
-        if (args.ids) {
-          query.id = { $in: args.ids }
-        }
         const options = {
           sort: { position: 1 }
         }
-        return context.db.collection('lessons').find(query, options).toArray()
+
+        if (args.ids && args.ids.length > 0) {
+          query.id = { $in: args.ids }
+        }
+
+        // If the ids === [], then we need to limit for the first lesson.
+        // This is useful for the /start page.
+        if (args.ids && args.ids.length === 0) {
+          options.limit = 1
+        }
+
+        return coll.find(query, options).toArray()
       }
     }
   })

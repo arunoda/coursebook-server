@@ -26,13 +26,20 @@ module.exports = new GraphQLObjectType({
     course: {
       args: {
         id: {
-          type: new GraphQLNonNull(GraphQLString)
+          type: GraphQLString
         }
       },
       type: Course,
       description: 'Return the course by the given id',
       resolve (root, args, context) {
-        return context.db.collection('courses').findOne({ _id: args.id })
+        const coll = context.db.collection('courses')
+        if (args.id) {
+          return coll.findOne({ _id: args.id })
+        } else {
+          // The "id" can be null and then we should send the first course.
+          // This is to support the /start page of the UI
+          return coll.findOne({}, { sort: [['position', 1]] })
+        }
       }
     },
 
