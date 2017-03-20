@@ -80,6 +80,16 @@ module.exports = new GraphQLObjectType({
       }
     },
 
+    removeAll: {
+      type: GraphQLBoolean,
+      resolve (root, args, context) {
+        checkForAdmin(context)
+
+        return context.db.collection('courses').remove({})
+          .then(() => context.db.collection('lessons').remove({}))
+      }
+    },
+
     markVisited: {
       type: GraphQLBoolean,
       description: 'Mark a given step in a lesson as visited',

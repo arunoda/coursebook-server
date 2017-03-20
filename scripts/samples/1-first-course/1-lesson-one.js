@@ -2,7 +2,7 @@ module.exports = {
   name: 'First Lesson',
   intro: `
     This is the intro for the lesson.
-    I hope it'll be pretty great!
+    I hope it'll be pretty great again!
   `,
   steps: [
     {

@@ -9,7 +9,7 @@
     "test": "npm run lint",
     "dev": "sh scripts/devrun.sh",
     "start": "node server.js",
-    "samples": "sh scripts/add-samples.sh"
+    "samples": "coursebook-publish http://localhost:3003 admin scripts/samples"
   },
   "repository": {
     "type": "git",
@@ -41,6 +41,7 @@
   "devDependencies": {
     "node-fetch": "^1.6.3",
     "nodemon": "^1.11.0",
-    "standard": "^8.6.0"
+    "standard": "^8.6.0",
+    "coursebook-publish": "^1.0.0"
   }
 }
