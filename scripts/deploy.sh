@@ -4,9 +4,9 @@ if [[ -z $ADMIN_TOKEN ]]; then
 fi
 
 now \
-  -a coursebook-server \
-  -e GITHUB_CLIENT_ID=@coursebook-gh-client-id \
-  -e GITHUB_CLIENT_SECRET=@coursebook-gh-client-secret \
+  -a server.learnnextjs.com \
+  -e GITHUB_CLIENT_ID=@learnnextjs-gh-client-id \
+  -e GITHUB_CLIENT_SECRET=@learnnextjs-gh-client-secret \
   -e ROOT_URL="https://coursebook-server.now.sh" \
-  -e MONGO_URL=@coursebook-mongo-url \
+  -e MONGO_URL=@learnnextjs-mongo-url \
   -e ADMIN_TOKEN=$ADMIN_TOKEN
