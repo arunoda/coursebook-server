@@ -16,6 +16,14 @@ module.exports = new GraphQLObjectType({
         return profile.displayName || profile.username
       }
     },
+    username: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'Username of the user on GitHub',
+      resolve (user) {
+        const { profile } = user.strategies.github
+        return profile.username
+      }
+    },
     points: {
       type: new GraphQLNonNull(GraphQLInt),
       description: 'Total points for this user',
